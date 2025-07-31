@@ -38,18 +38,17 @@ function game() {
     const maxAttempts = 10;
     let hasWon = false;
 
-    console.log("Welcome to the Number Guessing Game!");
-    console.log("Try to guess the number between 1 and 100.");
-    console.log("You have 10 attempts to defeat the Evil AI!");
+    alert("Welcome to the Number Guessing Game!");
+    alert("Try to guess the number between 1 and 100.");
+    alert("You have 10 attempts to defeat the Shitty AI!");
 
     while (attempts < maxAttempts) {
         const playerGuess = getPlayerGuess();
-
         attempts++;
 
         const result = checkGuess(playerGuess, secretNumber);
 
-        console.log("Attempt " + attempts + ": " + playerGuess + " - " + result);
+        alert("Attempt " + attempts + ": " + playerGuess + " - " + result);
 
         if (result === "Correct!") {
             hasWon = true;
@@ -59,12 +58,9 @@ function game() {
 
     if (hasWon) {
         const score = 100 - (attempts - 1) * 10;
-        console.log(`🎉 Congratulations! You guessed the number in ${attempts} attempts.`);
-        console.log(`Your score: ${score} points.`);
+        alert(`🎉 Congratulations! You guessed the number in ${attempts} attempts.\nYour score: ${score} points.`);
     } else {
-        console.log(`😈 You lost! The correct number was ${secretNumber}.`);
-        console.log(`Better luck next time`);
+        alert(`😈 You lost! The correct number was ${secretNumber}.\nBetter luck next time.`);
     }
 }
-
 game();
