@@ -49,7 +49,7 @@ function game() {
 
         const result = checkGuess(playerGuess, secretNumber);
 
-        console.log("Attempt " + attempts + ": " + guess + " → " + result);
+        console.log("Attempt " + attempts + ": " + playerGuess + " - " + result);
 
         if (result === "Correct!") {
             hasWon = true;
