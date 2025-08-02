@@ -89,23 +89,26 @@ function generateRandomNumber() {
 }
 
 function getPlayerGuess() {
-    let input;
+    let input = prompt("Enter a whole number between 1 and 100:");
 
-    while (true) {
-        input = prompt("Enter a whole number between 1 and 100:");
-
-        if (
-            input !== null &&
-            input.trim() !== "" &&
-            Number.isInteger(Number(input.trim())) &&
-            Number(input.trim()) >= 1 &&
-            Number(input.trim()) <= 100
-        ) {
-            return Number(input.trim());
-        }
-
-        alert("Invalid input! Please enter a whole number between 1 and 100.");
+    // Check if user clicked Cancel
+    if (input === null) {
+        return null;
     }
+
+    // Check if input is valid
+    if (
+        input.trim() !== "" &&
+        Number.isInteger(Number(input.trim())) &&
+        Number(input.trim()) >= 1 &&
+        Number(input.trim()) <= 100
+    ) {
+        return Number(input.trim());
+    }
+
+    // Invalid input - show error and return a special value
+    alert("Invalid input! Please enter a whole number between 1 and 100.");
+    return "invalid"; // Special value to indicate invalid input
 }
 
 function checkGuess(playerGuess, correctNumber) {
@@ -130,6 +133,19 @@ function numberGuessingGame() {
 
     while (attempts < maxAttempts) {
         const playerGuess = getPlayerGuess();
+        
+        // Check if user clicked Cancel
+        if (playerGuess === null) {
+            alert("Game cancelled. Thanks for playing!");
+            return; // Exit the game
+        }
+        
+        // Check if input was invalid (don't count as attempt)
+        if (playerGuess === "invalid") {
+            continue; // Skip this iteration, don't increment attempts
+        }
+        
+        // Valid input - count as attempt
         attempts++;
 
         const result = checkGuess(playerGuess, secretNumber);
