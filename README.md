@@ -1,56 +1,54 @@
-# JavaScript Assignment - Mathematical Shapes, Conditionals & Number Guessing Game
+🎮 Number Guessing Game
+A simple and interactive number guessing game built with vanilla JavaScript.
+Try to guess the number between 1 and 100 in 10 attempts — or surrender to the Evil AI!
 
-This repository contains solutions for a comprehensive JavaScript assignment covering mathematical calculations, conditional statements, and an interactive number guessing game.
+🚀 How to Play
+The game picks a random number between 1 and 100.
 
-## 📋 Assignment Contents
+You have 10 attempts to guess it.
 
-### Assignment 2: Mathematical Shapes
-- **Square Diagonal**: Calculate the diagonal of a square with side length 9 using the Pythagorean theorem
-- **Triangle Area**: Calculate the area of a triangle with sides 5, 6, and 7 using Heron's formula
-- **Circle Properties**: Calculate the circumference and surface area of a circle with radius 4
+After each guess, you’ll be told:
 
-### Assignment 3: Conditional Statements
-- **Larger Number**: Accept two integers and display the larger of the two
-- **Even/Odd Check**: Check whether an integer is even or odd
+📉 Too low
 
-### Assignment 4: Number Guessing Game
-- Interactive game where the player tries to guess a number between 1 and 100
-- Maximum of 10 attempts allowed
-- Includes scoring system based on number of attempts
-- Features input validation and user-friendly messages
+📈 Too high
 
-## 🚀 How to Run
+✅ Correct!
 
-1. Clone this repository
-2. Open `index.html` in a web browser
-3. Open the browser console (F12) to see mathematical calculations and conditional statement results
-4. The number guessing game will start automatically with popup prompts
+You can cancel the game anytime by pressing Cancel in the prompt.
 
-## 📁 File Structure
+After the game ends (win/lose), you can choose to play again.
 
-- `index.html` - Main HTML file with styling and structure
-- `game.js` - JavaScript file containing all assignment solutions
-- `README.md` - This documentation file
+📁 How to Run
+Open index.html in your web browser.
 
-## 🎯 Features
+The game starts automatically with instructions in popup alerts.
 
-- **Clean, well-commented code** with clear function names
-- **Comprehensive error handling** for user input
-- **Mathematical accuracy** using proper formulas and constants
-- **User-friendly interface** with clear instructions
-- **Responsive design** that works on different screen sizes
+💻 Technologies
+HTML5 – basic structure
 
-## 📊 Expected Output
+JavaScript – game logic, input prompts, feedback
 
-When you run the code, you'll see:
-1. Mathematical calculations in the console
-2. Conditional statement examples in the console
-3. Interactive number guessing game with popup dialogs
+✅ Features
+Friendly user messages with emoji support
 
-## 🛠️ Technical Details
+Cancel/exit the game gracefully
 
-- Uses `Math.PI` constant for circle calculations
-- Implements Heron's formula for triangle area
-- Uses Pythagorean theorem for square diagonal
-- Includes input validation for the guessing game
-- Features a scoring system (100 - (attempts-1) * 10 points)
+Attempts remaining clearly shown
+
+Final score calculation
+
+Replay option at the end
+
+🧠 Example Flow
+text
+Kopiera
+Redigera
+Welcome to the Number Guessing Game!
+Try to guess the number between 1 and 100.
+You have 10 chances to defeat the Evil AI.
+📄 File Info
+index.html – loads and runs the game script
+
+game.js – full game logic (clean and cancel-friendly)
+
