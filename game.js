@@ -2,68 +2,88 @@ function generateRandomNumber() {
     return Math.floor(Math.random() * 100) + 1;
 }
 
-function getPlayerGuess() {
+function getPlayerGuess(attemptsLeft) {
     let input;
 
     while (true) {
-        input = prompt("Enter a whole number between 1 and 100:");
+        input = prompt(
+            `🔢 Enter a whole number between 1 and 100\n` +
+            `🕹 Attempts left: ${attemptsLeft}\n\n` +
+            `Or press "Cancel" to quit the game.`
+        );
 
-        if (
-            input !== null &&
-            input.trim() !== "" &&
-            Number.isInteger(Number(input.trim())) &&
-            Number(input.trim()) >= 1 &&
-            Number(input.trim()) <= 100
-        ) {
-            return Number(input.trim());
+        if (input === null) {
+            return null;
         }
 
-        alert("Invalid input! Please enter a whole number between 1 and 100.");
+        input = input.trim();
+
+        if (
+            input !== "" &&
+            Number.isInteger(Number(input)) &&
+            Number(input) >= 1 &&
+            Number(input) <= 100
+        ) {
+            return Number(input);
+        }
+
+        alert("❌ Invalid input! Please enter a whole number between 1 and 100.");
     }
 }
 
 function checkGuess(playerGuess, correctNumber) {
     if (playerGuess < correctNumber) {
-        return "Too low!";
+        return "📉 Too low!";
     } else if (playerGuess > correctNumber) {
-        return "Too high!";
+        return "📈 Too high!";
     } else {
-        return "Correct!";
+        return "✅ Correct!";
     }
 }
 
 function game() {
+    alert(
+        "🎮 Welcome to the Number Guessing Game!\n\n" +
+        "I'm thinking of a number between 1 and 100.\n" +
+        "You have 10 chances to guess it right.\n\n" +
+        "Good luck, challenger!"
+    );
+
     const secretNumber = generateRandomNumber();
-    let attempts = 0;
     const maxAttempts = 10;
+    let attempts = 0;
     let hasWon = false;
 
-    console.log("Welcome to the Number Guessing Game!");
-    console.log("Try to guess the number between 1 and 100.");
-    console.log("You have 10 attempts to defeat the Evil AI!");
-
     while (attempts < maxAttempts) {
-        const playerGuess = getPlayerGuess();
+        const attemptsLeft = maxAttempts - attempts;
+        const guess = getPlayerGuess(attemptsLeft);
+
+        if (guess === null) {
+            alert("👋 Game cancelled. Thanks for playing!");
+            return;
+        }
 
         attempts++;
+        const result = checkGuess(guess, secretNumber);
+        alert(`Attempt ${attempts}: You guessed ${guess}\n${result}`);
 
-        const result = checkGuess(playerGuess, secretNumber);
-
-        console.log("Attempt " + attempts + ": " + playerGuess + " - " + result);
-
-        if (result === "Correct!") {
+        if (result.includes("Correct")) {
             hasWon = true;
             break;
         }
     }
 
-    if (hasWon) {
-        const score = 100 - (attempts - 1) * 10;
-        console.log(`🎉 Congratulations! You guessed the number in ${attempts} attempts.`);
-        console.log(`Your score: ${score} points.`);
+    const finalMessage = hasWon
+        ? `🎉 Well done! You guessed the number ${secretNumber} in ${attempts} attempt(s).\nYour score: ${100 - (attempts - 1) * 10} points.`
+        : `😈 Game over! You used all ${maxAttempts} attempts.\nThe correct number was ${secretNumber}.`;
+
+    alert(finalMessage);
+
+    const playAgain = confirm("🔁 Would you like to play again?");
+    if (playAgain) {
+        game();
     } else {
-        console.log(`😈 You lost! The correct number was ${secretNumber}.`);
-        console.log(`Better luck next time`);
+        alert("👋 Thanks for playing. See you next time!");
     }
 }
 
