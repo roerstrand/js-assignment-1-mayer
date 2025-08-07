@@ -1,107 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript Assignment - Mathematical Shapes, Conditionals & Number Guessing Game</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background-color: #f5f5f5;
-            line-height: 1.6;
-        }
-        
-        .container {
-            background-color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 1rem;
-        }
-        
-        .description {
-            background-color: #e8f4fd;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-bottom: 2rem;
-            border-left: 4px solid #2196F3;
-        }
-        
-        .assignment-section {
-            margin-bottom: 2rem;
-            padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-        
-        .assignment-section h3 {
-            color: #2196F3;
-            margin-top: 0;
-        }
-        
-        .note {
-            background-color: #fff3cd;
-            padding: 0.5rem;
-            border-radius: 3px;
-            margin-top: 1rem;
-            font-size: 0.9rem;
-            border-left: 3px solid #ffc107;
-        }
-    </style>
+    <title>Number Guessing Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+        <!-- Game Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">🎯 Number Guessing Game</h1>
+            <p class="text-gray-600">Guess the number between 1 and 100</p>
+        </div>
 
-<body>
-    <div class="container">
-        <h1>JavaScript Assignment Solutions</h1>
-        
-        <div class="description">
-            <strong>Welcome!</strong> This page contains solutions for the JavaScript assignment covering:
-            <ul>
-                <li>Mathematical Shapes Calculations</li>
-                <li>Conditional Statements</li>
-                <li>Number Guessing Game</li>
-            </ul>
+        <!-- Game Status -->
+        <div id="gameStatus" class="mb-6 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400">
+            <div id="statusText" class="text-blue-800 font-medium">Ready to play!</div>
+            <div id="attemptsInfo" class="text-sm text-blue-600 mt-1">Attempts: <span id="attemptsCount">0</span>/10</div>
         </div>
-        
-        <div class="assignment-section">
-            <h3>Assignment 2: Mathematical Shapes</h3>
-            <p>This section calculates:</p>
-            <ul>
-                <li>Diagonal of a square (side length = 9)</li>
-                <li>Area of a triangle (sides = 5, 6, 7)</li>
-                <li>Circumference and surface area of a circle (radius = 4)</li>
-            </ul>
+
+        <!-- Game Controls -->
+        <div id="gameControls" class="space-y-4">
+            <!-- Input Section -->
+            <div class="flex gap-2">
+                <input 
+                    type="number" 
+                    id="guessInput" 
+                    min="1" 
+                    max="100" 
+                    placeholder="Enter your guess..."
+                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                >
+                <button 
+                    id="submitGuess" 
+                    class="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all"
+                >
+                    Guess
+                </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-2">
+                <button 
+                    id="startGame" 
+                    class="flex-1 px-4 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all"
+                >
+                    Start New Game
+                </button>
+                <button 
+                    id="quitGame" 
+                    class="px-4 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all"
+                >
+                    Quit
+                </button>
+            </div>
         </div>
-        
-        <div class="assignment-section">
-            <h3>Assignment 3: Conditional Statements</h3>
-            <p>This section demonstrates:</p>
-            <ul>
-                <li>Finding the larger of two integers</li>
-                <li>Checking if a number is even or odd</li>
-            </ul>
+
+        <!-- Game History -->
+        <div id="gameHistory" class="mt-6 hidden">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">Game History</h3>
+            <div id="historyList" class="space-y-2 max-h-40 overflow-y-auto"></div>
         </div>
-        
-        <div class="assignment-section">
-            <h3>Assignment 4: Number Guessing Game</h3>
-            <p>An interactive game where you try to guess a number between 1 and 100 within 10 attempts.</p>
-        </div>
-        
-        <div class="note">
-            <strong>Note:</strong> Open the browser console (F12) to see the mathematical calculations and conditional statement results. The number guessing game will start automatically with popup prompts.
+
+        <!-- Score Display -->
+        <div id="scoreDisplay" class="mt-6 p-4 bg-gray-50 rounded-lg hidden">
+            <div class="text-center">
+                <div id="finalScore" class="text-2xl font-bold text-gray-800"></div>
+                <div id="scoreMessage" class="text-gray-600 mt-1"></div>
+            </div>
         </div>
     </div>
-    
+
     <script src="./game.js"></script>
 </body>
-
 </html>

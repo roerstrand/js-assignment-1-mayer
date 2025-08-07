@@ -1,213 +1,306 @@
 // ========================================
-// ASSIGNMENT 2: MATHEMATICAL SHAPES
+// NUMBER GUESSING GAME - IMPROVED VERSION
 // ========================================
 
-// Constants
-const PI = Math.PI;
-
-// a) Find the diagonal of a square where the length of each side is 9
-function calculateSquareDiagonal(sideLength) {
-    // Using Pythagorean theorem: diagonal = side * √2
-    const diagonal = sideLength * Math.sqrt(2);
-    console.log(`Square diagonal calculation:`);
-    console.log(`Side length: ${sideLength}`);
-    console.log(`Diagonal: ${diagonal.toFixed(2)}`);
-    return diagonal;
-}
-
-// b) Find the area of a triangle where lengths of the three sides are 5, 6 and 7
-function calculateTriangleArea(sideA, sideB, sideC) {
-    // Using Heron's formula: area = √(s(s-a)(s-b)(s-c)) where s = (a+b+c)/2
-    const semiPerimeter = (sideA + sideB + sideC) / 2;
-    const area = Math.sqrt(semiPerimeter * (semiPerimeter - sideA) * (semiPerimeter - sideB) * (semiPerimeter - sideC));
-    
-    console.log(`Triangle area calculation:`);
-    console.log(`Sides: ${sideA}, ${sideB}, ${sideC}`);
-    console.log(`Semi-perimeter: ${semiPerimeter}`);
-    console.log(`Area: ${area.toFixed(2)}`);
-    return area;
-}
-
-// c) Find the circumference and surface area of a circle whose radius is 4
-function calculateCircleProperties(radius) {
-    // Circumference = 2 * π * radius
-    const circumference = 2 * PI * radius;
-    
-    // Surface area = π * radius²
-    const surfaceArea = PI * radius * radius;
-    
-    console.log(`Circle properties calculation:`);
-    console.log(`Radius: ${radius}`);
-    console.log(`Circumference: ${circumference.toFixed(2)}`);
-    console.log(`Surface area: ${surfaceArea.toFixed(2)}`);
-    
-    return { circumference, surfaceArea };
-}
-
-// ========================================
-// ASSIGNMENT 3: CONDITIONAL STATEMENTS
-// ========================================
-
-// a) Accept two integers and display the larger of the two
-function findLargerNumber(num1, num2) {
-    console.log(`Finding larger number:`);
-    console.log(`Number 1: ${num1}`);
-    console.log(`Number 2: ${num2}`);
-    
-    if (num1 > num2) {
-        console.log(`Larger number: ${num1}`);
-        return num1;
-    } else if (num2 > num1) {
-        console.log(`Larger number: ${num2}`);
-        return num2;
-    } else {
-        console.log(`Both numbers are equal: ${num1}`);
-        return num1;
-    }
-}
-
-// b) Check whether an integer is even or odd
-function checkEvenOrOdd(number) {
-    console.log(`Checking if number is even or odd:`);
-    console.log(`Number: ${number}`);
-    
-    if (number % 2 === 0) {
-        console.log(`${number} is even`);
-        return "even";
-    } else {
-        console.log(`${number} is odd`);
-        return "odd";
-    }
-}
-
-// ========================================
-// ASSIGNMENT 4: NUMBER GUESSING GAME
-// ========================================
-
-function generateRandomNumber() {
-    return Math.floor(Math.random() * 100) + 1;
-}
-
-function getPlayerGuess() {
-    let input = prompt("Enter a whole number between 1 and 100:");
-
-    // Check if user clicked Cancel
-    if (input === null) {
-        return null;
-    }
-
-    // Check if input is valid
-    if (
-        input.trim() !== "" &&
-        Number.isInteger(Number(input.trim())) &&
-        Number(input.trim()) >= 1 &&
-        Number(input.trim()) <= 100
-    ) {
-        return Number(input.trim());
-    }
-
-    // Invalid input - show error and return a special value
-    alert("Invalid input! Please enter a whole number between 1 and 100.");
-    return "invalid"; // Special value to indicate invalid input
-}
-
-function checkGuess(playerGuess, correctNumber) {
-    if (playerGuess < correctNumber) {
-        return "Too low!";
-    } else if (playerGuess > correctNumber) {
-        return "Too high!";
-    } else {
-        return "Correct!";
-    }
-}
-
-function numberGuessingGame() {
-    const secretNumber = generateRandomNumber();
-    let attempts = 0;
-    const maxAttempts = 10;
-    let hasWon = false;
-
-    alert("Welcome to the Number Guessing Game!");
-    alert("Try to guess the number between 1 and 100.");
-    alert("You have 10 attempts to defeat the Evil AI!");
-
-    while (attempts < maxAttempts) {
-        const playerGuess = getPlayerGuess();
+class NumberGuessingGame {
+    constructor() {
+        // Game state
+        this.secretNumber = null;
+        this.attempts = 0;
+        this.maxAttempts = 10;
+        this.isGameActive = false;
+        this.gameHistory = [];
         
-        // Check if user clicked Cancel
-        if (playerGuess === null) {
-            alert("Game cancelled. Thanks for playing!");
-            return; // Exit the game
+        // DOM elements
+        this.elements = {
+            guessInput: document.getElementById('guessInput'),
+            submitGuess: document.getElementById('submitGuess'),
+            startGame: document.getElementById('startGame'),
+            quitGame: document.getElementById('quitGame'),
+            statusText: document.getElementById('statusText'),
+            attemptsCount: document.getElementById('attemptsCount'),
+            gameHistory: document.getElementById('gameHistory'),
+            historyList: document.getElementById('historyList'),
+            scoreDisplay: document.getElementById('scoreDisplay'),
+            finalScore: document.getElementById('finalScore'),
+            scoreMessage: document.getElementById('scoreMessage')
+        };
+        
+        // Initialize the game
+        this.initializeEventListeners();
+        this.updateUI();
+    }
+
+    // ========================================
+    // INITIALIZATION METHODS
+    // ========================================
+
+    initializeEventListeners() {
+        // Submit guess button
+        this.elements.submitGuess.addEventListener('click', () => this.handleGuess());
+        
+        // Enter key in input field
+        this.elements.guessInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                this.handleGuess();
+            }
+        });
+        
+        // Start new game button
+        this.elements.startGame.addEventListener('click', () => this.startNewGame());
+        
+        // Quit game button
+        this.elements.quitGame.addEventListener('click', () => this.quitGame());
+    }
+
+    // ========================================
+    // GAME LOGIC METHODS
+    // ========================================
+
+    generateRandomNumber() {
+        // Generate a random number between 1 and 100
+        return Math.floor(Math.random() * 100) + 1;
+    }
+
+    validateGuess(guess) {
+        // Validate that the guess is a valid number between 1 and 100
+        const num = parseInt(guess);
+        if (isNaN(num) || num < 1 || num > 100) {
+            return { isValid: false, message: 'Please enter a valid number between 1 and 100.' };
         }
-        
-        // Check if input was invalid (don't count as attempt)
-        if (playerGuess === "invalid") {
-            continue; // Skip this iteration, don't increment attempts
-        }
-        
-        // Valid input - count as attempt
-        attempts++;
+        return { isValid: true, value: num };
+    }
 
-        const result = checkGuess(playerGuess, secretNumber);
-
-        alert("Attempt " + attempts + ": " + playerGuess + " - " + result);
-
-        if (result === "Correct!") {
-            hasWon = true;
-            break;
+    checkGuess(playerGuess) {
+        // Compare the player's guess with the secret number
+        if (playerGuess < this.secretNumber) {
+            return { result: 'low', message: 'Too low! Try a higher number.' };
+        } else if (playerGuess > this.secretNumber) {
+            return { result: 'high', message: 'Too high! Try a lower number.' };
+        } else {
+            return { result: 'correct', message: '🎉 Correct! You found the number!' };
         }
     }
 
-    if (hasWon) {
-        const score = 100 - (attempts - 1) * 10;
-        alert(`🎉 Congratulations! You guessed the number in ${attempts} attempts.\nYour score: ${score} points.`);
-    } else {
-        alert(`😈 You lost! The correct number was ${secretNumber}.\nBetter luck next time.`);
+    calculateScore() {
+        // Calculate score based on attempts (100 points for perfect game, -10 per attempt)
+        return Math.max(0, 100 - (this.attempts - 1) * 10);
+    }
+
+    // ========================================
+    // GAME STATE METHODS
+    // ========================================
+
+    startNewGame() {
+        // Reset game state and start a new game
+        this.secretNumber = this.generateRandomNumber();
+        this.attempts = 0;
+        this.isGameActive = true;
+        this.gameHistory = [];
+        
+        // Update UI
+        this.updateUI();
+        this.elements.guessInput.focus();
+        
+        // Update status
+        this.updateStatus('Game started! Guess a number between 1 and 100.', 'blue');
+        
+        console.log('New game started. Secret number:', this.secretNumber);
+    }
+
+    quitGame() {
+        // Quit the current game
+        if (this.isGameActive) {
+            this.isGameActive = false;
+            this.updateStatus('Game quit. Click "Start New Game" to play again.', 'gray');
+            this.elements.guessInput.value = '';
+            this.elements.guessInput.disabled = true;
+            this.elements.submitGuess.disabled = true;
+        }
+    }
+
+    endGame(won) {
+        // End the current game and show results
+        this.isGameActive = false;
+        
+        if (won) {
+            const score = this.calculateScore();
+            this.updateStatus(`🎉 Congratulations! You won in ${this.attempts} attempts!`, 'green');
+            this.showFinalScore(score, 'You defeated the game!');
+        } else {
+            this.updateStatus(`😔 Game over! The number was ${this.secretNumber}.`, 'red');
+            this.showFinalScore(0, 'Better luck next time!');
+        }
+        
+        // Disable input
+        this.elements.guessInput.disabled = true;
+        this.elements.submitGuess.disabled = true;
+    }
+
+    // ========================================
+    // USER INTERACTION METHODS
+    // ========================================
+
+    handleGuess() {
+        // Handle the player's guess
+        if (!this.isGameActive) {
+            this.updateStatus('Please start a new game first.', 'yellow');
+            return;
+        }
+
+        const guessValue = this.elements.guessInput.value.trim();
+        const validation = this.validateGuess(guessValue);
+
+        if (!validation.isValid) {
+            this.updateStatus(validation.message, 'red');
+            this.elements.guessInput.value = '';
+            this.elements.guessInput.focus();
+            return;
+        }
+
+        // Process valid guess
+        this.attempts++;
+        const guess = validation.value;
+        const result = this.checkGuess(guess);
+        
+        // Add to history
+        this.addToHistory(guess, result);
+        
+        // Update UI
+        this.updateUI();
+        this.elements.guessInput.value = '';
+        this.elements.guessInput.focus();
+
+        // Check game end conditions
+        if (result.result === 'correct') {
+            this.endGame(true);
+        } else if (this.attempts >= this.maxAttempts) {
+            this.endGame(false);
+        } else {
+            this.updateStatus(result.message, 'blue');
+        }
+    }
+
+    // ========================================
+    // UI UPDATE METHODS
+    // ========================================
+
+    updateUI() {
+        // Update attempts counter
+        this.elements.attemptsCount.textContent = this.attempts;
+        
+        // Update input field state
+        this.elements.guessInput.disabled = !this.isGameActive;
+        this.elements.submitGuess.disabled = !this.isGameActive;
+        
+        // Show/hide game history
+        if (this.gameHistory.length > 0) {
+            this.elements.gameHistory.classList.remove('hidden');
+        } else {
+            this.elements.gameHistory.classList.add('hidden');
+        }
+    }
+
+    updateStatus(message, color = 'blue') {
+        // Update the status message with color coding
+        this.elements.statusText.textContent = message;
+        
+        // Remove existing color classes
+        this.elements.statusText.className = 'text-blue-800 font-medium';
+        
+        // Add new color class
+        switch (color) {
+            case 'green':
+                this.elements.statusText.className = 'text-green-800 font-medium';
+                break;
+            case 'red':
+                this.elements.statusText.className = 'text-red-800 font-medium';
+                break;
+            case 'yellow':
+                this.elements.statusText.className = 'text-yellow-800 font-medium';
+                break;
+            case 'gray':
+                this.elements.statusText.className = 'text-gray-800 font-medium';
+                break;
+            default:
+                this.elements.statusText.className = 'text-blue-800 font-medium';
+        }
+    }
+
+    addToHistory(guess, result) {
+        // Add guess to game history
+        const historyItem = {
+            attempt: this.attempts,
+            guess: guess,
+            result: result.result,
+            message: result.message
+        };
+        
+        this.gameHistory.push(historyItem);
+        this.updateHistoryDisplay();
+    }
+
+    updateHistoryDisplay() {
+        // Update the history display
+        this.elements.historyList.innerHTML = '';
+        
+        this.gameHistory.forEach(item => {
+            const historyElement = document.createElement('div');
+            historyElement.className = 'flex justify-between items-center p-2 bg-gray-50 rounded';
+            
+            const resultIcon = item.result === 'correct' ? '🎯' : 
+                             item.result === 'high' ? '📈' : '📉';
+            
+            historyElement.innerHTML = `
+                <span class="text-sm text-gray-600">Attempt ${item.attempt}: ${item.guess}</span>
+                <span class="text-sm font-medium">${resultIcon} ${item.result.toUpperCase()}</span>
+            `;
+            
+            this.elements.historyList.appendChild(historyElement);
+        });
+    }
+
+    showFinalScore(score, message) {
+        // Show the final score display
+        this.elements.finalScore.textContent = `Score: ${score} points`;
+        this.elements.scoreMessage.textContent = message;
+        this.elements.scoreDisplay.classList.remove('hidden');
+    }
+
+    // ========================================
+    // UTILITY METHODS
+    // ========================================
+
+    resetGame() {
+        // Reset all game state and UI
+        this.secretNumber = null;
+        this.attempts = 0;
+        this.isGameActive = false;
+        this.gameHistory = [];
+        
+        this.elements.guessInput.value = '';
+        this.elements.guessInput.disabled = false;
+        this.elements.submitGuess.disabled = false;
+        this.elements.scoreDisplay.classList.add('hidden');
+        this.elements.gameHistory.classList.add('hidden');
+        
+        this.updateStatus('Ready to play! Click "Start New Game" to begin.', 'blue');
+        this.updateUI();
     }
 }
 
 // ========================================
-// MAIN EXECUTION
+// GAME INITIALIZATION
 // ========================================
 
-console.log("=== MATHEMATICAL SHAPES ASSIGNMENT ===");
-console.log("");
-
-// Run mathematical shape calculations
-calculateSquareDiagonal(9);
-console.log("");
-
-calculateTriangleArea(5, 6, 7);
-console.log("");
-
-calculateCircleProperties(4);
-console.log("");
-
-console.log("=== CONDITIONAL STATEMENTS ASSIGNMENT ===");
-console.log("");
-
-// Run conditional statement examples
-findLargerNumber(15, 8);
-console.log("");
-
-findLargerNumber(3, 12);
-console.log("");
-
-findLargerNumber(7, 7);
-console.log("");
-
-checkEvenOrOdd(24);
-console.log("");
-
-checkEvenOrOdd(17);
-console.log("");
-
-checkEvenOrOdd(0);
-console.log("");
-
-console.log("=== NUMBER GUESSING GAME ASSIGNMENT ===");
-console.log("Starting the game...");
-console.log("");
-
-// Start the number guessing game
-numberGuessingGame();
+// Wait for DOM to load, then initialize the game
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🎯 Number Guessing Game - Improved Version');
+    console.log('Features: Modern UI, Quit functionality, Game history, Score tracking');
+    
+    // Initialize the game
+    const game = new NumberGuessingGame();
+    
+    // Make game globally accessible for debugging
+    window.numberGuessingGame = game;
+});
